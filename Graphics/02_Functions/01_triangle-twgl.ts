@@ -10,18 +10,20 @@ import * as twgl from 'twgl-base.js';
 
 // Vertex Shader as a string
 const vsGLSL = `#version 300 es
-in vec4 a_position;
-in vec4 a_color;
+// Attributes
+in vec4 a_position; // x, y, z
+in vec4 a_color; // Vector de 4 valores, RGBA
+// in - input 
 
 out vec4 v_color;
 
 void main() {
-    gl_Position = a_position;
+    gl_Position = a_position; // El objetivo es llenar la variable
     v_color = a_color;
 }
 `;
 
-// Fragment Shader as a string
+// Fragment Shader as a string - Pixel Shader (sinónimos)
 const fsGLSL = `#version 300 es
 precision highp float;
 
@@ -90,9 +92,9 @@ function generateData(): twgl.Arrays {
             */
             // To pass integer values, the type must be specified
             data: new Uint8Array([
-                255, 0, 0, 255,
-                0, 255, 0, 255,
-                0, 0, 255, 255,
+                255, 0, 255, 255,
+                255, 255, 0, 255,
+                0, 255, 255, 255,
             ]),
         },
     };

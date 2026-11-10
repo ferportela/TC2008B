@@ -63,7 +63,7 @@ function drawScene(
     const scaleMatrix = M3.scale(scale);
 
     let transforms = M3.identity();
-    transforms = M3.multiply(scaleMatrix, transforms);
+    transforms = M3.multiply(scaleMatrix, transforms); // transforms es la matriz identidad
     transforms = M3.multiply(rotateMatrix, transforms);
     transforms = M3.multiply(translateMatrix, transforms);
 
