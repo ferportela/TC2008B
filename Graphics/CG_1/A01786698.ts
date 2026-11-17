@@ -84,7 +84,6 @@ class RotationScene extends Scene {
         let modelTransforms: Mat3 = M3.identity();
 
         // TODO: Multiply the matrices in the correct order to obtain the required results
-
         // Rotación conforme al pivote
         let rotationAroundPivot: Mat3 = M3.multiply(
             centerToPivot,
