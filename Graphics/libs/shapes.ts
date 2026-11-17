@@ -46,7 +46,7 @@ function shapeF(): twgl.Arrays {
     return arrays;
 }
 
-function shapeF_centered() : twgl.Arrays {
+function shapeF_centered(): twgl.Arrays {
     let arrays = {
         a_position: {
             numComponents: 2,
@@ -82,7 +82,7 @@ function shapeF_centered() : twgl.Arrays {
     return arrays;
 }
 
-function smiley(radius: number) : twgl.Arrays {
+function smiley(radius: number): twgl.Arrays {
     // The arrays are initially empty
     const positionData: number[] = [];
     const colorData: number[] = [];
@@ -95,25 +95,51 @@ function smiley(radius: number) : twgl.Arrays {
     // HINT: You can use polar coordinates to define the positions of vertices,
     // using the radius and an angle. Then convert them to polar coordinates.
 
-    // Sample data for a single yellow triangle. Replace with your values.
-    positionData.push(0, 100);
-    positionData.push(-120, -100);
-    positionData.push(120, -100);
-    colorData.push(0.9, 0.8, 0, 1);
-    colorData.push(0.9, 0.8, 0, 1);
-    colorData.push(0.9, 0.8, 0, 1);
+    // "Círculo" naranja
+    positionData.push(0, 0);
+    colorData.push(1.0, 0.5, 0.0, 1);
 
-    indexData.push(0, 2, 1);
+    const segments = 8;
+    for (let i = 0; i < segments; i++) {
+        const angle = (i * 2 * Math.PI) / segments;
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
 
+        positionData.push(x, y);
+        colorData.push(1.0, 0.5, 0.0, 1);
+    }
 
+    for (let i = 1; i <= segments; i++) {
+        const next = (i % segments) + 1;
+        indexData.push(0, i, next);
+    }
 
+    // Ojos
+    // Derecho
+    positionData.push(15, 25, 45, 25, 30, 55);
+    colorData.push(0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1);
+    indexData.push(12, 13, 14);
+    // Izquierdo
+    positionData.push(-45, 25, -15, 25, -30, 55);
+    colorData.push(0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1);
+    indexData.push(9, 10, 11);
 
+    // Boca
+    positionData.push(-50, -25, -20, -25, -35, -45);
+    colorData.push(0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1);
+    indexData.push(15, 16, 17);
+    positionData.push(-15, -55, 15, -55, 0, -30);
+    colorData.push(0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1);
+    indexData.push(18, 19, 20);
+    positionData.push(20, -25, 50, -25, 35, -45);
+    colorData.push(0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 1);
+    indexData.push(21, 22, 23);
 
     // Build the final object with the arrays for positions, colors, and indices
     const arrays: twgl.Arrays = {
         a_position: { numComponents: 2, data: positionData },
-        a_color:    { numComponents: 4, data: colorData },
-        indices:    { numComponents: 3, data: indexData },
+        a_color: { numComponents: 4, data: colorData },
+        indices: { numComponents: 3, data: indexData },
     };
 
     console.log(arrays);
@@ -121,7 +147,7 @@ function smiley(radius: number) : twgl.Arrays {
     return arrays;
 }
 
-function diamond(size: number) : twgl.Arrays {
+function diamond(size: number): twgl.Arrays {
     let arrays = {
         a_position: {
             numComponents: 2,
@@ -131,15 +157,25 @@ function diamond(size: number) : twgl.Arrays {
                 0, size,
                 -size, 0,
                 0, -size,
+                // Nuevo diamante
+                size * 0.7, size * 0.7,
+                -size * 0.7, size * 0.7,
+                -size * 0.7, -size * 0.7,
+                size * 0.7, -size * 0.7,
             ]
         },
         a_color: {
             numComponents: 4,
             data: [
-                0.5, 0.5, 0.5, 1,
-                0.5, 0.5, 0.5, 1,
-                0.5, 0.5, 0.5, 1,
-                0.5, 0.5, 0.5, 1,
+                0.25, 0.45, 0.12, 1,
+                0.25, 0.45, 0.12, 1,
+                0.25, 0.45, 0.12, 1,
+                0.25, 0.45, 0.12, 1,
+                // Nuevo diamante
+                0.25, 0.45, 0.12, 1,
+                0.25, 0.45, 0.12, 1,
+                0.25, 0.45, 0.12, 1,
+                0.25, 0.45, 0.12, 1,
             ]
         },
         indices: {
@@ -148,6 +184,9 @@ function diamond(size: number) : twgl.Arrays {
                 // Front face
                 0, 1, 2,
                 2, 3, 0,
+                // Nuevo diamante
+                4, 5, 6,
+                6, 7, 4,
             ]
         }
     };
@@ -155,30 +194,30 @@ function diamond(size: number) : twgl.Arrays {
     return arrays;
 }
 
-function car2D() : twgl.Arrays {
+function car2D(): twgl.Arrays {
     let arrays = {
         a_position: {
             numComponents: 2,
             data: [
-                -100,  -40,
-                 -40,  -40,
-                  40,  -40,
-                 100,  -40,
-                 100,  -20,
-                  40,   10,
-                 -40,   10,
-                -100,   20,
-                 -30,   40,
-                  24,   30,
+                -100, -40,
+                -40, -40,
+                40, -40,
+                100, -40,
+                100, -20,
+                40, 10,
+                -40, 10,
+                -100, 20,
+                -30, 40,
+                24, 30,
             ]
         },
         indices: {
             numComponents: 3,
             data: [
-                0, 1, 6,      0, 6, 7,    // Car back
-                1, 2, 5,      1, 5, 6,    // Car middle
-                2, 3, 4,      2, 4, 5,    // Car front
-                6, 5, 9,      6, 9, 8     // Car top
+                0, 1, 6, 0, 6, 7,    // Car back
+                1, 2, 5, 1, 5, 6,    // Car middle
+                2, 3, 4, 2, 4, 5,    // Car front
+                6, 5, 9, 6, 9, 8     // Car top
             ]
         }
     }
@@ -188,46 +227,46 @@ function car2D() : twgl.Arrays {
 
 
 // Create the data for a cube where each face has a different color
-function cubeFaceColors(size: number) : twgl.Arrays {
+function cubeFaceColors(size: number): twgl.Arrays {
     let arrays = {
         a_position: {
             numComponents: 3,
             data: [
                 // Front Face
-                -1.0, -1.0,  1.0,
-                 1.0, -1.0,  1.0,
-                 1.0,  1.0,  1.0,
-                -1.0,  1.0,  1.0,
+                -1.0, -1.0, 1.0,
+                1.0, -1.0, 1.0,
+                1.0, 1.0, 1.0,
+                -1.0, 1.0, 1.0,
 
                 // Back face
                 -1.0, -1.0, -1.0,
-                -1.0,  1.0, -1.0,
-                 1.0,  1.0, -1.0,
-                 1.0, -1.0, -1.0,
+                -1.0, 1.0, -1.0,
+                1.0, 1.0, -1.0,
+                1.0, -1.0, -1.0,
 
                 // Top face
-                -1.0,  1.0, -1.0,
-                -1.0,  1.0,  1.0,
-                 1.0,  1.0,  1.0,
-                 1.0,  1.0, -1.0,
+                -1.0, 1.0, -1.0,
+                -1.0, 1.0, 1.0,
+                1.0, 1.0, 1.0,
+                1.0, 1.0, -1.0,
 
                 // Bottom face
                 -1.0, -1.0, -1.0,
-                 1.0, -1.0, -1.0,
-                 1.0, -1.0,  1.0,
-                -1.0, -1.0,  1.0,
+                1.0, -1.0, -1.0,
+                1.0, -1.0, 1.0,
+                -1.0, -1.0, 1.0,
 
                 // Right face
-                 1.0, -1.0, -1.0,
-                 1.0,  1.0, -1.0,
-                 1.0,  1.0,  1.0,
-                 1.0, -1.0,  1.0,
+                1.0, -1.0, -1.0,
+                1.0, 1.0, -1.0,
+                1.0, 1.0, 1.0,
+                1.0, -1.0, 1.0,
 
                 // Left face
                 -1.0, -1.0, -1.0,
-                -1.0, -1.0,  1.0,
-                -1.0,  1.0,  1.0,
-                -1.0,  1.0, -1.0
+                -1.0, -1.0, 1.0,
+                -1.0, 1.0, 1.0,
+                -1.0, 1.0, -1.0
             ].map(e => size * e)
         },
         a_normal: {
@@ -308,12 +347,12 @@ function cubeFaceColors(size: number) : twgl.Arrays {
         indices: {
             numComponents: 3,
             data: [
-                0, 1, 2,      0, 2, 3,    // Front face
-                4, 5, 6,      4, 6, 7,    // Back face
-                8, 9, 10,     8, 10, 11,  // Top face
-                12, 13, 14,   12, 14, 15, // Bottom face
-                16, 17, 18,   16, 18, 19, // Right face
-                20, 21, 22,   20, 22, 23  // Left face
+                0, 1, 2, 0, 2, 3,    // Front face
+                4, 5, 6, 4, 6, 7,    // Back face
+                8, 9, 10, 8, 10, 11,  // Top face
+                12, 13, 14, 12, 14, 15, // Bottom face
+                16, 17, 18, 16, 18, 19, // Right face
+                20, 21, 22, 20, 22, 23  // Left face
             ]
         }
     };
@@ -322,19 +361,19 @@ function cubeFaceColors(size: number) : twgl.Arrays {
 }
 
 // Create the data for a cube with each vertex in a different color
-function cubeVertexColors(size: number) : twgl.Arrays {
+function cubeVertexColors(size: number): twgl.Arrays {
     let arrays = {
         a_position: {
             numComponents: 3,
             data: [
-                 1,  1,  1, // v_0
-                 1, -1,  1, // v_1
-                -1, -1,  1, // v_2
-                -1,  1,  1, // v_3
-                 1,  1, -1, // v_4
-                 1, -1, -1, // v_5
+                1, 1, 1, // v_0
+                1, -1, 1, // v_1
+                -1, -1, 1, // v_2
+                -1, 1, 1, // v_3
+                1, 1, -1, // v_4
+                1, -1, -1, // v_5
                 -1, -1, -1, // v_6
-                -1,  1, -1, // v_7
+                -1, 1, -1, // v_7
             ].map(e => size * e)
         },
         a_color: {
@@ -379,46 +418,46 @@ function cubeVertexColors(size: number) : twgl.Arrays {
 }
 
 // Create the data for a cube with vertex coordinates
-function cubeTextured(size: number) : twgl.Arrays {
+function cubeTextured(size: number): twgl.Arrays {
     let arrays = {
         a_position: {
             numComponents: 3,
             data: [
                 // Front Face
-                -1.0, -1.0,  1.0,
-                 1.0, -1.0,  1.0,
-                 1.0,  1.0,  1.0,
-                -1.0,  1.0,  1.0,
+                -1.0, -1.0, 1.0,
+                1.0, -1.0, 1.0,
+                1.0, 1.0, 1.0,
+                -1.0, 1.0, 1.0,
 
                 // Back face
                 -1.0, -1.0, -1.0,
-                -1.0,  1.0, -1.0,
-                 1.0,  1.0, -1.0,
-                 1.0, -1.0, -1.0,
+                -1.0, 1.0, -1.0,
+                1.0, 1.0, -1.0,
+                1.0, -1.0, -1.0,
 
                 // Top face
-                -1.0,  1.0, -1.0,
-                -1.0,  1.0,  1.0,
-                 1.0,  1.0,  1.0,
-                 1.0,  1.0, -1.0,
+                -1.0, 1.0, -1.0,
+                -1.0, 1.0, 1.0,
+                1.0, 1.0, 1.0,
+                1.0, 1.0, -1.0,
 
                 // Bottom face
                 -1.0, -1.0, -1.0,
-                 1.0, -1.0, -1.0,
-                 1.0, -1.0,  1.0,
-                -1.0, -1.0,  1.0,
+                1.0, -1.0, -1.0,
+                1.0, -1.0, 1.0,
+                -1.0, -1.0, 1.0,
 
                 // Right face
-                 1.0, -1.0, -1.0,
-                 1.0,  1.0, -1.0,
-                 1.0,  1.0,  1.0,
-                 1.0, -1.0,  1.0,
+                1.0, -1.0, -1.0,
+                1.0, 1.0, -1.0,
+                1.0, 1.0, 1.0,
+                1.0, -1.0, 1.0,
 
                 // Left face
                 -1.0, -1.0, -1.0,
-                -1.0, -1.0,  1.0,
-                -1.0,  1.0,  1.0,
-                -1.0,  1.0, -1.0
+                -1.0, -1.0, 1.0,
+                -1.0, 1.0, 1.0,
+                -1.0, 1.0, -1.0
             ].map(e => size * e)
         },
         a_normal: {
@@ -502,7 +541,7 @@ function cubeTextured(size: number) : twgl.Arrays {
                 // Front Face
                 0.0, 0.0,
                 1.0, 0.0,
-                1.0,  1.0,
+                1.0, 1.0,
                 0.0, 1.0,
 
                 // Back face
@@ -539,12 +578,12 @@ function cubeTextured(size: number) : twgl.Arrays {
         indices: {
             numComponents: 3,
             data: [
-                0, 1, 2,      0, 2, 3,    // Front face
-                4, 5, 6,      4, 6, 7,    // Back face
-                8, 9, 10,     8, 10, 11,  // Top face
-                12, 13, 14,   12, 14, 15, // Bottom face
-                16, 17, 18,   16, 18, 19, // Right face
-                20, 21, 22,   20, 22, 23  // Left face
+                0, 1, 2, 0, 2, 3,    // Front face
+                4, 5, 6, 4, 6, 7,    // Back face
+                8, 9, 10, 8, 10, 11,  // Top face
+                12, 13, 14, 12, 14, 15, // Bottom face
+                16, 17, 18, 16, 18, 19, // Right face
+                20, 21, 22, 20, 22, 23  // Left face
             ]
         }
     };
@@ -552,5 +591,7 @@ function cubeTextured(size: number) : twgl.Arrays {
     return arrays;
 }
 
-export { shapeF, diamond, cubeFaceColors, cubeVertexColors, cubeTextured,
-         car2D, smiley, shapeF_centered };
+export {
+    shapeF, diamond, cubeFaceColors, cubeVertexColors, cubeTextured,
+    car2D, smiley, shapeF_centered
+};

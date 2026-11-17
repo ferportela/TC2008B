@@ -24,17 +24,31 @@ import fsGLSL from './fs_vertex_color.glsl?raw';
  * Specifies the objects that will be used, and the UI operations available.
  */
 class RotationScene extends Scene {
+
+    settings = {
+        currentOrder: 'scale -> translation -> rotation',
+    };
+
+    // Dictionary of the available orders (first = applied first)
+    orders: Record<string, string[]> = {
+        'scale -> rotation -> translation': ['scale', 'rotation', 'translation'],
+        'scale -> translation -> rotation': ['scale', 'translation', 'rotation'],
+        'translation -> scale -> rotation': ['translation', 'scale', 'rotation'],
+        'rotation -> translation -> scale': ['rotation', 'translation', 'scale'],
+        'rotation -> scale -> translation': ['rotation', 'scale', 'translation'],
+    };
+
     constructor(gl: WebGL2RenderingContext) {
         super(gl, vsGLSL, fsGLSL);
 
         // Create the objects for this scene
         const model = this.addObject('model', smiley(150),
-            [ Math.random(), Math.random(), Math.random(), 1 ]);
+            [Math.random(), Math.random(), Math.random(), 1]);
         model.transforms.t.x = gl.canvas.width / 2;
         model.transforms.t.y = gl.canvas.height / 2;
 
         const pivot = this.addObject('pivot', diamond(30),
-            [ 0.6, 0.6, 0.6, 1]);
+            [0.6, 0.6, 0.6, 1]);
         pivot.transforms.t.x = gl.canvas.width / 2;
         pivot.transforms.t.y = gl.canvas.height / 2;
     }
@@ -51,22 +65,41 @@ class RotationScene extends Scene {
 
         // Vector to translate the pivot to the center of the world
         const v2_pivot_to_center: Vec2 = V2.create(-pivot.transforms.t.x,
-                                                   -pivot.transforms.t.y);
+            -pivot.transforms.t.y);
         // Vector to translate the pivot back to its original position
         const v2_center_to_pivot: Vec2 = V2.create(pivot.transforms.t.x,
-                                                   pivot.transforms.t.y);
+            pivot.transforms.t.y);
 
         // Transform matrices for the model
         // TODO: Create the matrices necessary
 
-
+        const scaleMatrix: Mat3 = M3.scale(v2_scale);
+        const pivotToCenter: Mat3 = M3.translation(v2_pivot_to_center);
+        const centerToPivot: Mat3 = M3.translation(v2_center_to_pivot);
+        const rotateMatrix: Mat3 = M3.rotation(model.transforms.rr.z);
+        const translateMatrix: Mat3 = M3.translation(v2_trans);
 
         // Create a composite transform matrix
         let modelTransforms: Mat3 = M3.identity();
         // TODO: Multiply the matrices in the correct order to obtain the required results
 
+        // Rotation around the pivot: move pivot to origin, rotate, move back
+        let rotationAroundPivot: Mat3 = M3.identity();
+        rotationAroundPivot = M3.multiply(pivotToCenter, rotationAroundPivot);
+        rotationAroundPivot = M3.multiply(rotateMatrix, rotationAroundPivot);
+        rotationAroundPivot = M3.multiply(centerToPivot, rotationAroundPivot);
 
+        // Matrices available by name
+        const matrices: Record<string, Mat3> = {
+            scale: scaleMatrix,
+            rotation: rotationAroundPivot,
+            translation: translateMatrix,
+        };
 
+        // Compose in the order selected in the dropdown
+        for (const step of this.orders[this.settings.currentOrder]) {
+            modelTransforms = M3.multiply(matrices[step], modelTransforms);
+        }
 
         gl.useProgram(programInfo.program);
 
@@ -102,6 +135,9 @@ class RotationScene extends Scene {
         const pivot = this.getObject('pivot');
 
         const gui = new GUI();
+
+        gui.add(this.settings, 'currentOrder', Object.keys(this.orders))
+            .name('Order');
 
         const modelFolder = gui.addFolder('Model');
 

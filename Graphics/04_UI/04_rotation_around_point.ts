@@ -27,7 +27,7 @@ import fsGLSL from './fs_flat_color.glsl?raw';
  * Specifies the objects that will be used, and the UI operations available.
  */
 class RotationScene extends Scene {
-//class RotationScene extends Scene<'model' | 'pivot'> {
+    //class RotationScene extends Scene<'model' | 'pivot'> {
     constructor(gl: WebGL2RenderingContext) {
         super(gl, vsGLSL, fsGLSL);
 
@@ -38,7 +38,7 @@ class RotationScene extends Scene {
         model.transforms.t.y = gl.canvas.height / 2;
 
         const pivot = this.addObject('pivot', diamond(30),
-            [ 0.6, 0.6, 0.6, 1]);
+            [0.6, 0.6, 0.6, 1]);
         pivot.transforms.t.x = gl.canvas.width / 2;
         pivot.transforms.t.y = gl.canvas.height / 2;
     }
@@ -55,23 +55,31 @@ class RotationScene extends Scene {
 
         // Vector to translate the pivot to the center of the world
         const v2_pivot_to_center: Vec2 = V2.create(-pivot.transforms.t.x,
-                                                   -pivot.transforms.t.y);
+            -pivot.transforms.t.y);
         // Vector to translate the pivot back to its original position
         const v2_center_to_pivot: Vec2 = V2.create(pivot.transforms.t.x,
-                                                   pivot.transforms.t.y);
+            pivot.transforms.t.y);
 
 
         // Transform matrices for the model
         // TODO: Create the matrices necessary
 
-
+        const scaleMatrix: Mat3 = M3.scale(v2_scale);
+        const pivotToCenter: Mat3 = M3.translation(v2_pivot_to_center);
+        const centerToPivot: Mat3 = M3.translation(v2_center_to_pivot);
+        const rotateMatrix: Mat3 = M3.rotation(model.transforms.rr.z);
+        const translateMatrix: Mat3 = M3.translation(v2_trans);
 
         // Create a composite transform matrix
         let modelTransforms: Mat3 = M3.identity();
         // TODO: Multiply the matrices in the correct order to obtain the required results
 
-
-
+        modelTransforms = M3.multiply(scaleMatrix, modelTransforms);
+        modelTransforms = M3.multiply(translateMatrix, modelTransforms);
+        // Rotation around an arbitrary point
+        modelTransforms = M3.multiply(pivotToCenter, modelTransforms);
+        modelTransforms = M3.multiply(rotateMatrix, modelTransforms);
+        modelTransforms = M3.multiply(centerToPivot, modelTransforms);
 
         gl.useProgram(programInfo.program);
 
