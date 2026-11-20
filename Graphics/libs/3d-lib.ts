@@ -28,21 +28,41 @@ export class V3 {
     // TODO: Complete the following methods
 
     static length(v: Vec3): number {
-        return 0;
+        return Math.sqrt(
+            v[X] * v[X] +
+            v[Y] * v[Y] +
+            v[Z] * v[Z]
+        );
     }
 
     static normalize(v: Vec3, dest?: Vec3): Vec3 {
         dest = dest || new Float32Array(3);
 
+        const len = V3.length(v);
+
+        if (len > 0) {
+            dest[X] = v[X] / len;
+            dest[Y] = v[Y] / len;
+            dest[Z] = v[Z] / len;
+        }
+
         return dest;
     }
 
     static dot(u: Vec3, v: Vec3): number {
-        return 0;
+        return (
+            u[X] * v[X] +
+            u[Y] * v[Y] +
+            u[Z] * v[Z]
+        );
     }
 
     static cross(u: Vec3, v: Vec3, dest?: Vec3): Vec3 {
         dest = dest || new Float32Array(3);
+
+        dest[X] = u[Y] * v[Z] - u[Z] * v[Y];
+        dest[Y] = u[Z] * v[X] - u[X] * v[Z];
+        dest[Z] = u[X] * v[Y] - u[Y] * v[X];
 
         return dest;
     }
@@ -51,6 +71,10 @@ export class V3 {
     static add(u: Vec3, v: Vec3, dest?: Vec3): Vec3 {
         dest = dest || new Float32Array(3);
 
+        dest[X] = u[X] + v[X];
+        dest[Y] = u[Y] + v[Y];
+        dest[Z] = u[Z] + v[Z];
+
         return dest;
     }
 
@@ -58,12 +82,20 @@ export class V3 {
     static subtract(u: Vec3, v: Vec3, dest?: Vec3): Vec3 {
         dest = dest || new Float32Array(3);
 
+        dest[X] = u[X] - v[X];
+        dest[Y] = u[Y] - v[Y];
+        dest[Z] = u[Z] - v[Z];
+
         return dest;
     }
 
     // Multiply a vector by a scalar value
     static scale(u: Vec3, s: number, dest?: Vec3): Vec3 {
         dest = dest || new Float32Array(3);
+
+        dest[X] = u[X] * s;
+        dest[Y] = u[Y] * s;
+        dest[Z] = u[Z] * s;
 
         return dest;
     }
@@ -88,94 +120,125 @@ export class M4 {
     a20 a21 a22 a23           b20 b21 b22 b23
     a30 a31 a32 a33           b30 b31 b32 b33
     */
+
     static multiply(a: Mat4, b: Mat4): Mat4 {
-        // Get the elements in the matrix
-        const a00 = a[0 * 4 + 0];
-        const a01 = a[0 * 4 + 1];
-        const a02 = a[0 * 4 + 2];
-        const a03 = a[0 * 4 + 3];
-        const a10 = a[1 * 4 + 0];
-        const a11 = a[1 * 4 + 1];
-        const a12 = a[1 * 4 + 2];
-        const a13 = a[1 * 4 + 3];
-        const a20 = a[2 * 4 + 0];
-        const a21 = a[2 * 4 + 1];
-        const a22 = a[2 * 4 + 2];
-        const a23 = a[2 * 4 + 3];
-        const a30 = a[3 * 4 + 0];
-        const a31 = a[3 * 4 + 1];
-        const a32 = a[3 * 4 + 2];
-        const a33 = a[3 * 4 + 3];
+        // Get the elements in the matrix a
+        const a00 = a[0];
+        const a01 = a[1];
+        const a02 = a[2];
+        const a03 = a[3];
 
-        const b00 = b[0 * 4 + 0];
-        const b01 = b[0 * 4 + 1];
-        const b02 = b[0 * 4 + 2];
-        const b03 = b[0 * 4 + 3];
-        const b10 = b[1 * 4 + 0];
-        const b11 = b[1 * 4 + 1];
-        const b12 = b[1 * 4 + 2];
-        const b13 = b[1 * 4 + 3];
-        const b20 = b[2 * 4 + 0];
-        const b21 = b[2 * 4 + 1];
-        const b22 = b[2 * 4 + 2];
-        const b23 = b[2 * 4 + 3];
-        const b30 = b[3 * 4 + 0];
-        const b31 = b[3 * 4 + 1];
-        const b32 = b[3 * 4 + 2];
-        const b33 = b[3 * 4 + 3];
+        const a10 = a[4];
+        const a11 = a[5];
+        const a12 = a[6];
+        const a13 = a[7];
 
-        // The matrices are oriented transposed,
-        // so the multiplication must be adjusted accordingly
+        const a20 = a[8];
+        const a21 = a[9];
+        const a22 = a[10];
+        const a23 = a[11];
+
+        const a30 = a[12];
+        const a31 = a[13];
+        const a32 = a[14];
+        const a33 = a[15];
+
+        // Get the elements in the matrix b
+        const b00 = b[0];
+        const b01 = b[1];
+        const b02 = b[2];
+        const b03 = b[3];
+
+        const b10 = b[4];
+        const b11 = b[5];
+        const b12 = b[6];
+        const b13 = b[7];
+
+        const b20 = b[8];
+        const b21 = b[9];
+        const b22 = b[10];
+        const b23 = b[11];
+
+        const b30 = b[12];
+        const b31 = b[13];
+        const b32 = b[14];
+        const b33 = b[15];
+
+        // Multiply the matrices
         return new Float32Array([
-            1,  0,  0,  0,
-            0,  1,  0,  0,
-            0,  0,  1,  0,
-            0,  0,  0,  1
+            a00 * b00 + a10 * b01 + a20 * b02 + a30 * b03,
+            a01 * b00 + a11 * b01 + a21 * b02 + a31 * b03,
+            a02 * b00 + a12 * b01 + a22 * b02 + a32 * b03,
+            a03 * b00 + a13 * b01 + a23 * b02 + a33 * b03,
+
+            a00 * b10 + a10 * b11 + a20 * b12 + a30 * b13,
+            a01 * b10 + a11 * b11 + a21 * b12 + a31 * b13,
+            a02 * b10 + a12 * b11 + a22 * b12 + a32 * b13,
+            a03 * b10 + a13 * b11 + a23 * b12 + a33 * b13,
+
+            a00 * b20 + a10 * b21 + a20 * b22 + a30 * b23,
+            a01 * b20 + a11 * b21 + a21 * b22 + a31 * b23,
+            a02 * b20 + a12 * b21 + a22 * b22 + a32 * b23,
+            a03 * b20 + a13 * b21 + a23 * b22 + a33 * b23,
+
+            a00 * b30 + a10 * b31 + a20 * b32 + a30 * b33,
+            a01 * b30 + a11 * b31 + a21 * b32 + a31 * b33,
+            a02 * b30 + a12 * b31 + a22 * b32 + a32 * b33,
+            a03 * b30 + a13 * b31 + a23 * b32 + a33 * b33
         ]);
     }
 
     static translation(v: Vec3): Mat4 {
         return new Float32Array([
-             1,  0,  0,  0,
-             0,  1,  0,  0,
-             0,  0,  1,  0,
-             0,  0,  0,  1
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            v[X], v[Y], v[Z], 1
         ]);
     }
 
     static rotationX(angleRadians: number): Mat4 {
+        const c = Math.cos(angleRadians);
+        const s = Math.sin(angleRadians);
+
         return new Float32Array([
-             1,  0,  0,  0,
-             0,  1,  0,  0,
-             0,  0,  1,  0,
-             0,  0,  0,  1
+            1, 0, 0, 0,
+            0, c, s, 0,
+            0, -s, c, 0,
+            0, 0, 0, 1
         ]);
     }
 
     static rotationY(angleRadians: number): Mat4 {
+        const c = Math.cos(angleRadians);
+        const s = Math.sin(angleRadians);
+
         return new Float32Array([
-             1,  0,  0,  0,
-             0,  1,  0,  0,
-             0,  0,  1,  0,
-             0,  0,  0,  1
+            c, 0, -s, 0,
+            0, 1, 0, 0,
+            s, 0, c, 0,
+            0, 0, 0, 1
         ]);
     }
 
     static rotationZ(angleRadians: number): Mat4 {
+        const c = Math.cos(angleRadians);
+        const s = Math.sin(angleRadians);
+
         return new Float32Array([
-             1,  0,  0,  0,
-             0,  1,  0,  0,
-             0,  0,  1,  0,
-             0,  0,  0,  1
+            c, s, 0, 0,
+            -s, c, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
         ]);
     }
 
     static scale(v: Vec3): Mat4 {
         return new Float32Array([
-             1,  0,  0,  0,
-             0,  1,  0,  0,
-             0,  0,  1,  0,
-             0,  0,  0,  1
+            v[X], 0, 0, 0,
+            0, v[Y], 0, 0,
+            0, 0, v[Z], 0,
+            0, 0, 0, 1
         ]);
     }
 
@@ -233,16 +296,16 @@ export class M4 {
         const m32 = m[3 * 4 + 2];
         const m33 = m[3 * 4 + 3];
 
-        dst[ 0] = m00;
-        dst[ 1] = m10;
-        dst[ 2] = m20;
-        dst[ 3] = m30;
-        dst[ 4] = m01;
-        dst[ 5] = m11;
-        dst[ 6] = m21;
-        dst[ 7] = m31;
-        dst[ 8] = m02;
-        dst[ 9] = m12;
+        dst[0] = m00;
+        dst[1] = m10;
+        dst[2] = m20;
+        dst[3] = m30;
+        dst[4] = m01;
+        dst[5] = m11;
+        dst[6] = m21;
+        dst[7] = m31;
+        dst[8] = m02;
+        dst[9] = m12;
         dst[10] = m22;
         dst[11] = m32;
         dst[12] = m03;
@@ -279,16 +342,16 @@ export class M4 {
         const m31 = m[3 * 4 + 1];
         const m32 = m[3 * 4 + 2];
         const m33 = m[3 * 4 + 3];
-        const tmp_0  = m22 * m33;
-        const tmp_1  = m32 * m23;
-        const tmp_2  = m12 * m33;
-        const tmp_3  = m32 * m13;
-        const tmp_4  = m12 * m23;
-        const tmp_5  = m22 * m13;
-        const tmp_6  = m02 * m33;
-        const tmp_7  = m32 * m03;
-        const tmp_8  = m02 * m23;
-        const tmp_9  = m22 * m03;
+        const tmp_0 = m22 * m33;
+        const tmp_1 = m32 * m23;
+        const tmp_2 = m12 * m33;
+        const tmp_3 = m32 * m13;
+        const tmp_4 = m12 * m23;
+        const tmp_5 = m22 * m13;
+        const tmp_6 = m02 * m33;
+        const tmp_7 = m32 * m03;
+        const tmp_8 = m02 * m23;
+        const tmp_9 = m22 * m03;
         const tmp_10 = m02 * m13;
         const tmp_11 = m12 * m03;
         const tmp_12 = m20 * m31;
@@ -315,21 +378,21 @@ export class M4 {
 
         const d = 1.0 / (m00 * t0 + m10 * t1 + m20 * t2 + m30 * t3);
 
-        dst[ 0] = d * t0;
-        dst[ 1] = d * t1;
-        dst[ 2] = d * t2;
-        dst[ 3] = d * t3;
-        dst[ 4] = d * ((tmp_1 * m10 + tmp_2 * m20 + tmp_5 * m30) -
+        dst[0] = d * t0;
+        dst[1] = d * t1;
+        dst[2] = d * t2;
+        dst[3] = d * t3;
+        dst[4] = d * ((tmp_1 * m10 + tmp_2 * m20 + tmp_5 * m30) -
             (tmp_0 * m10 + tmp_3 * m20 + tmp_4 * m30));
-        dst[ 5] = d * ((tmp_0 * m00 + tmp_7 * m20 + tmp_8 * m30) -
+        dst[5] = d * ((tmp_0 * m00 + tmp_7 * m20 + tmp_8 * m30) -
             (tmp_1 * m00 + tmp_6 * m20 + tmp_9 * m30));
-        dst[ 6] = d * ((tmp_3 * m00 + tmp_6 * m10 + tmp_11 * m30) -
+        dst[6] = d * ((tmp_3 * m00 + tmp_6 * m10 + tmp_11 * m30) -
             (tmp_2 * m00 + tmp_7 * m10 + tmp_10 * m30));
-        dst[ 7] = d * ((tmp_4 * m00 + tmp_9 * m10 + tmp_10 * m20) -
+        dst[7] = d * ((tmp_4 * m00 + tmp_9 * m10 + tmp_10 * m20) -
             (tmp_5 * m00 + tmp_8 * m10 + tmp_11 * m20));
-        dst[ 8] = d * ((tmp_12 * m13 + tmp_15 * m23 + tmp_16 * m33) -
+        dst[8] = d * ((tmp_12 * m13 + tmp_15 * m23 + tmp_16 * m33) -
             (tmp_13 * m13 + tmp_14 * m23 + tmp_17 * m33));
-        dst[ 9] = d * ((tmp_13 * m03 + tmp_18 * m23 + tmp_21 * m33) -
+        dst[9] = d * ((tmp_13 * m03 + tmp_18 * m23 + tmp_21 * m33) -
             (tmp_12 * m03 + tmp_19 * m23 + tmp_20 * m33));
         dst[10] = d * ((tmp_14 * m03 + tmp_19 * m13 + tmp_22 * m33) -
             (tmp_15 * m03 + tmp_18 * m13 + tmp_23 * m33));
@@ -379,18 +442,18 @@ export class M4 {
         const f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewYInRadians);
         const rangeInv = 1.0 / (zNear - zFar);
 
-        dst[0]  = f / aspect;
-        dst[1]  = 0;
-        dst[2]  = 0;
-        dst[3]  = 0;
+        dst[0] = f / aspect;
+        dst[1] = 0;
+        dst[2] = 0;
+        dst[3] = 0;
 
-        dst[4]  = 0;
-        dst[5]  = f;
-        dst[6]  = 0;
-        dst[7]  = 0;
+        dst[4] = 0;
+        dst[5] = f;
+        dst[6] = 0;
+        dst[7] = 0;
 
-        dst[8]  = 0;
-        dst[9]  = 0;
+        dst[8] = 0;
+        dst[9] = 0;
         dst[10] = (zNear + zFar) * rangeInv;
         dst[11] = -1;
 
@@ -418,7 +481,7 @@ export class M4 {
      * @return {M4} The perspective matrix.
      */
     static ortho(
-        left:number,
+        left: number,
         right: number,
         bottom: number,
         top: number,
@@ -428,18 +491,18 @@ export class M4 {
     ): Mat4 {
         dst = dst || new Float32Array(16);
 
-        dst[0]  = 2 / (right - left);
-        dst[1]  = 0;
-        dst[2]  = 0;
-        dst[3]  = 0;
+        dst[0] = 2 / (right - left);
+        dst[1] = 0;
+        dst[2] = 0;
+        dst[3] = 0;
 
-        dst[4]  = 0;
-        dst[5]  = 2 / (top - bottom);
-        dst[6]  = 0;
-        dst[7]  = 0;
+        dst[4] = 0;
+        dst[5] = 2 / (top - bottom);
+        dst[6] = 0;
+        dst[7] = 0;
 
-        dst[8]  = 0;
-        dst[9]  = 0;
+        dst[8] = 0;
+        dst[9] = 0;
         dst[10] = 2 / (near - far);
         dst[11] = 0;
 
@@ -484,16 +547,16 @@ export class M4 {
         const dy = (top - bottom);
         const dz = (near - far);
 
-        dst[ 0] = 2 * near / dx;
-        dst[ 1] = 0;
-        dst[ 2] = 0;
-        dst[ 3] = 0;
-        dst[ 4] = 0;
-        dst[ 5] = 2 * near / dy;
-        dst[ 6] = 0;
-        dst[ 7] = 0;
-        dst[ 8] = (left + right) / dx;
-        dst[ 9] = (top + bottom) / dy;
+        dst[0] = 2 * near / dx;
+        dst[1] = 0;
+        dst[2] = 0;
+        dst[3] = 0;
+        dst[4] = 0;
+        dst[5] = 2 * near / dy;
+        dst[6] = 0;
+        dst[7] = 0;
+        dst[8] = (left + right) / dx;
+        dst[9] = (top + bottom) / dy;
         dst[10] = far / dz;
         dst[11] = -1;
         dst[12] = 0;
@@ -533,16 +596,16 @@ export class M4 {
         V3.normalize(V3.cross(up, zAxis, xAxis), xAxis);
         V3.normalize(V3.cross(zAxis, xAxis, yAxis), yAxis);
 
-        dst[ 0] = xAxis[0];
-        dst[ 1] = xAxis[1];
-        dst[ 2] = xAxis[2];
-        dst[ 3] = 0;
-        dst[ 4] = yAxis[0];
-        dst[ 5] = yAxis[1];
-        dst[ 6] = yAxis[2];
-        dst[ 7] = 0;
-        dst[ 8] = zAxis[0];
-        dst[ 9] = zAxis[1];
+        dst[0] = xAxis[0];
+        dst[1] = xAxis[1];
+        dst[2] = xAxis[2];
+        dst[3] = 0;
+        dst[4] = yAxis[0];
+        dst[5] = yAxis[1];
+        dst[6] = yAxis[2];
+        dst[7] = 0;
+        dst[8] = zAxis[0];
+        dst[9] = zAxis[1];
         dst[10] = zAxis[2];
         dst[11] = 0;
         dst[12] = eye[0];

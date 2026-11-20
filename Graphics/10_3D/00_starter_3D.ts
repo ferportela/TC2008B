@@ -35,21 +35,40 @@ class CubeOneScene extends Scene {
 
         // Prepare the vector for translation and scale
         // TODO: Assign the correct values for translation and scale from the object properties
-        let v3_tra: Vec3 = [];
-        let v3_sca: Vec3 = [];
+        let v3_tra: Vec3 = V3.create(
+            object.transforms.t.x,
+            object.transforms.t.y,
+            object.transforms.t.z
+        );
+
+        let v3_sca: Vec3 = V3.create(
+            object.transforms.s.x,
+            object.transforms.s.y,
+            object.transforms.s.z
+        );
 
         // Create the individual transform matrices
         // TODO: Create matrices for each of the transformations
+        const translationMatrix = M4.translation(v3_tra);
 
+        const rotationXMatrix = M4.rotationX(object.transforms.rr.x);
+        const rotationYMatrix = M4.rotationY(object.transforms.rr.y);
+        const rotationZMatrix = M4.rotationZ(object.transforms.rr.z);
 
-
+        const scaleMatrix = M4.scale(v3_sca);
 
         // Create the composite matrix with all transformations
         // TODO: Create a single transformation matrix that combines all the individual transformations
-        let transforms: Mat4 = M4.identity();
-
-
-
+        let transforms: Mat4 = M4.multiply(
+            translationMatrix,
+            M4.multiply(
+                rotationZMatrix,
+                M4.multiply(
+                    rotationYMatrix,
+                    M4.multiply(rotationXMatrix, scaleMatrix)
+                )
+            )
+        );
 
         //object.matrix = transforms;
 
@@ -113,39 +132,39 @@ class CubeOneScene extends Scene {
 
         // Create the UI elements for each value
         const traFolder = gui.addFolder('Translation:')
-        traFolder.add( model.transforms.t, 'x', -5, 5)
-        traFolder.add( model.transforms.t, 'y', -5, 5)
-        traFolder.add( model.transforms.t, 'z', -5, 5)
+        traFolder.add(model.transforms.t, 'x', -5, 5)
+        traFolder.add(model.transforms.t, 'y', -5, 5)
+        traFolder.add(model.transforms.t, 'z', -5, 5)
 
         const rotFolder = gui.addFolder('Rotation:')
-        rotFolder.add( model.transforms.rd, 'x', -360, 360)
+        rotFolder.add(model.transforms.rd, 'x', -360, 360)
             .decimals(2)
-            .onChange( (value: number) => {
+            .onChange((value: number) => {
                 model.transforms.rr.x = value * Math.PI / 180.0;
             });
-        rotFolder.add( model.transforms.rd, 'y', -360, 360)
+        rotFolder.add(model.transforms.rd, 'y', -360, 360)
             .decimals(2)
-            .onChange( (value: number) => {
+            .onChange((value: number) => {
                 model.transforms.rr.y = value * Math.PI / 180.0;
             });
-        rotFolder.add( model.transforms.rd, 'z', -360, 360)
+        rotFolder.add(model.transforms.rd, 'z', -360, 360)
             .decimals(2)
-            .onChange( (value: number) => {
+            .onChange((value: number) => {
                 model.transforms.rr.z = value * Math.PI / 180.0;
             });
 
         const scaFolder = gui.addFolder('Scale:')
-        scaFolder.add( model.transforms, 's_all', -5, 5)
-            .onChange( (value: number) => {
+        scaFolder.add(model.transforms, 's_all', -5, 5)
+            .onChange((value: number) => {
                 model.transforms.s.x = value;
                 model.transforms.s.y = value;
                 model.transforms.s.z = value;
             })
-        scaFolder.add( model.transforms.s, 'x', -5, 5)
+        scaFolder.add(model.transforms.s, 'x', -5, 5)
             .listen()
-        scaFolder.add( model.transforms.s, 'y', -5, 5)
+        scaFolder.add(model.transforms.s, 'y', -5, 5)
             .listen()
-        scaFolder.add( model.transforms.s, 'z', -5, 5)
+        scaFolder.add(model.transforms.s, 'z', -5, 5)
             .listen()
     }
 }
